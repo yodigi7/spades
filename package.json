@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/yodigi7/spades#readme",
   "dependencies": {
+    "deepcopy": "^2.0.0",
     "playing-card-deck-generator": "^2.0.1"
   },
   "devDependencies": {
