@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const Game = require('../Game');
-const Deck = require('playing-card-deck-generator').Deck;
+const { Deck, Card } = require('playing-card-deck-generator');
 
 describe('Game', () => {
 
@@ -40,6 +40,67 @@ describe('Game', () => {
         }
         expect(game.cardsOnBoard).to.deep.equal([playedCard]);
         expect(game.currentPlayerTurn).to.equal(game.team2.player2);
+    });
+
+    // TODO
+    it('endTrick()', () => {
+    });
+
+    // TODO
+    it('_endRound()', () => {
+    });
+
+    it('_updatePoints() successfully updates the correct score', () => {
+        game.team1.player1.bid = 3;
+        game.team1.player1.wonTrickCount = 4;
+        game.team2.player2.bid = 5;
+        game.team2.player2.wonTrickCount = 2;
+        game.team1.player3.bid = 2;
+        game.team1.player3.wonTrickCount = 3;
+        game.team2.player4.bid = 1;
+        game.team2.player4.wonTrickCount = 1;
+
+        game._updatePoints();
+
+        expect(game.team1.score).to.equal(50);
+        expect(game.team2.score).to.equal(-60);
+    });
+
+    it('_updateWinner() successfully updates the correct winner score', () => {
+        let onBoard = [new Card('2', 'h'), new Card('3', 'h'), new Card('K', 'h'), new Card('4', 'h')];
+        game.cardsOnBoard = onBoard;
+        game._updateWinner();
+        expect(game.team1.player1.wonTrickCount).to.equal(0);
+        expect(game.team1.player3.wonTrickCount).to.equal(1);
+        expect(game.team2.player2.wonTrickCount).to.equal(0);
+        expect(game.team2.player4.wonTrickCount).to.equal(0);
+
+        game = new Game();
+        onBoard = [new Card('2', 's'), new Card('3', 'h'), new Card('K', 'h'), new Card('4', 'h')];
+        game.cardsOnBoard = onBoard;
+        game._updateWinner();
+        expect(game.team1.player1.wonTrickCount).to.equal(1);
+        expect(game.team1.player3.wonTrickCount).to.equal(0);
+        expect(game.team2.player2.wonTrickCount).to.equal(0);
+        expect(game.team2.player4.wonTrickCount).to.equal(0);
+
+        game = new Game();
+        onBoard = [new Card('2', 'h'), new Card('3', 'h'), new Card('K', 'h'), new Card('4', 's')];
+        game.cardsOnBoard = onBoard;
+        game._updateWinner();
+        expect(game.team1.player1.wonTrickCount).to.equal(0);
+        expect(game.team1.player3.wonTrickCount).to.equal(0);
+        expect(game.team2.player2.wonTrickCount).to.equal(0);
+        expect(game.team2.player4.wonTrickCount).to.equal(1);
+
+        game = new Game();
+        onBoard = [new Card('2', 'h'), new Card('3', 'h'), new Card('K', 'd'), new Card('4', 'c')];
+        game.cardsOnBoard = onBoard;
+        game._updateWinner();
+        expect(game.team1.player1.wonTrickCount).to.equal(0);
+        expect(game.team1.player3.wonTrickCount).to.equal(0);
+        expect(game.team2.player2.wonTrickCount).to.equal(1);
+        expect(game.team2.player4.wonTrickCount).to.equal(0);
     });
 
     it('_getHand() removes 13 from deck and received cards are the 13 missing cards', () => {
